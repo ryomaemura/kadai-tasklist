@@ -1,0 +1,2 @@
+class AddUserToTask < ApplicationRecord
+end
