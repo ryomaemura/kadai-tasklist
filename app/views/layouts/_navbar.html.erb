@@ -1,5 +1,5 @@
 <% if logged_in? %>
-  <a href="/">Task List</a>
+  <%= link_to 'Task List', root_url%>
   <%= link_to 'Logout', logout_path, method: :delete %>
 <% else %>
   <%= link_to 'Signup', signup_path, class: 'nav-link' %>
