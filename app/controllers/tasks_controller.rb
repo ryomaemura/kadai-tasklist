@@ -1,7 +1,6 @@
 class TasksController < ApplicationController
   before_action :require_user_logged_in
-  before_action :set_task, only: [:show, :edit, :update, :destroy]
-  before_action :check_post_user, only: [:show, :edit, :update, :destroy]
+  before_action :correct_user, only: [:show, :edit, :update, :destroy]
 
   def index
     @tasks = Task.all
@@ -50,18 +49,10 @@ class TasksController < ApplicationController
 
   private
   
-  # 存在しないidのtaskにアクセスした場合/tasksにリダイレクトする
-  def set_task
-    if Task.find_by(id: params[:id])
-      @task = Task.find_by(id: params[:id])
-    else
-      redirect_to tasks_url
-    end
-  end
-  
-  # 現在ログインしているユーザーのtaskでは無い場合loginページにリダイレクトする
-  def check_post_user
-    unless current_user.id == @task.user_id
+  # 現在のユーザーのtaskを取得し、見つからない場合は/tasksにリダイレクトする
+  def correct_user
+    @task = current_user.tasks.find_by(id: params[:id])
+    unless @task
       redirect_to tasks_url
     end
   end
