@@ -4,11 +4,7 @@ class TasksController < ApplicationController
   before_action :check_post_user, only: [:show, :edit, :update, :destroy]
 
   def index
-    if logged_in?
-      @tasks = Task.all
-    else
-      redirect_to login_url
-    end
+    @tasks = Task.all
   end
   
   def show
@@ -54,18 +50,12 @@ class TasksController < ApplicationController
 
   private
   
+  # 存在しないidのtaskにアクセスした場合/tasksにリダイレクトする
   def set_task
     if Task.find_by(id: params[:id])
       @task = Task.find_by(id: params[:id])
     else
       redirect_to tasks_url
-    end
-  end
-  
-  # ログインしていない場合loginページにリダイレクトされる
-  def require_user_logged_in
-    unless logged_in?
-      redirect_to login_url
     end
   end
   
