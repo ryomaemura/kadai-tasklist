@@ -1,5 +1,7 @@
 class TasksController < ApplicationController
+  before_action :require_user_logged_in
   before_action :set_task, only: [:show, :edit, :update, :destroy]
+  before_action :check_post_user, only: [:show, :edit, :update, :destroy]
 
   def index
     if logged_in?
@@ -10,9 +12,6 @@ class TasksController < ApplicationController
   end
   
   def show
-    unless @task.user_id == current_user.id
-      redirect_to root_url
-    end
   end
   
   def new
@@ -56,7 +55,25 @@ class TasksController < ApplicationController
   private
   
   def set_task
-    @task = Task.find(params[:id])
+    if Task.find_by(id: params[:id])
+      @task = Task.find_by(id: params[:id])
+    else
+      redirect_to tasks_url
+    end
+  end
+  
+  # ログインしていない場合loginページにリダイレクトされる
+  def require_user_logged_in
+    unless logged_in?
+      redirect_to login_url
+    end
+  end
+  
+  # 現在ログインしているユーザーのtaskでは無い場合loginページにリダイレクトする
+  def check_post_user
+    unless current_user.id == @task.user_id
+      redirect_to tasks_url
+    end
   end
 
   # Strong Parameter
